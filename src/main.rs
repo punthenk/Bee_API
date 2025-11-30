@@ -1,4 +1,3 @@
-use std::net::SocketAddr;
 use sqlx::mysql::MySqlPoolOptions;
 use tracing_subscriber;
 
