@@ -1,34 +1,51 @@
-use axum::{routing::get, Router, Json};
-use serde::Serialize;
-use std::net::SocketAddr;
+use sqlx::mysql::MySqlPoolOptions;
+use tracing_subscriber;
 
-#[derive(Serialize)]
-struct ApiResponse {
-    message: String,
-    status: String,
+mod controllers {
+    pub mod hive_controller;
 }
 
-async fn hello_handler() -> Json<ApiResponse> {
-    Json(ApiResponse {
-        message: "Hello, the API is working".to_string(),
-        status: "success".to_string(),
-    })
+mod models {
+    pub mod hive;
 }
+mod routes;
 
+/// This function:
+/// 1. Sets up logging
+/// 2. Connects to the database
+/// 3. Creates the router with all routes
+/// 4. Starts the HTTP server
 #[tokio::main]
 async fn main() {
-    let app = Router::new()
-        .route("/", get(hello_handler));
+    dotenv::dotenv().ok();
+    tracing_subscriber::fmt::init();
 
-    // Run it on localhost:3000
-    let addr = SocketAddr::from(([127, 0, 0, 1], 3000));
-    println!("Server running on http://{}", addr);
+    let database_url = std::env::var("DATABASE_URL")
+        .expect("DATABASE_URL env variables are not set");
 
-    let listener = tokio::net::TcpListener::bind(addr)
+    println!("Connecting to db...");
+
+    let pool = MySqlPoolOptions::new()
+        .max_connections(5)
+        .connect(&database_url)
         .await
-        .unwrap();
-    
+        .expect("Failed to connect to database");
+
+    println!("Is connected to db");
+
+    let app = routes::create_routes(pool);
+
+    let host = std::env::var("HOST").unwrap_or_else(|_| "127.0.0.1".to_string());
+    let port = std::env::var("PORT").unwrap_or_else(|_| "3000".to_string());
+    let address = format!("{}:{}", host, port);
+
+    let listener = tokio::net::TcpListener::bind(&address)
+        .await
+        .expect("Failed to bind to address");
+
+    println!("Listening on http://{}", address);
+
     axum::serve(listener, app)
         .await
-        .unwrap();
+        .expect("Server failed to start");
 }
