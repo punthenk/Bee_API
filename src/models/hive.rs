@@ -16,6 +16,10 @@ pub struct Hive {
 impl Hive {
     // This is static method so no self
     // Returns either a Vec of hives or a database error
+
+    // The underscore _ allows SQLx to infer the row type automatically based on the query result,
+    // while `Hive` is the target type to which each row will be mapped. 
+    // This means SQLx will automatically map the columns of the query result to the fields in the `Hive` struct.
     pub async fn get_all(pool: &MySqlPool) -> Result<Vec<Hive>> {
         sqlx::query_as::<_, Hive>(
             "SELECT *
