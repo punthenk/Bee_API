@@ -20,11 +20,8 @@ async fn main() {
     dotenv::dotenv().ok();
     tracing_subscriber::fmt::init();
 
-    let database_url = if let Ok(url) = std::env::var("DATABASE_URL") {
-        url
-    } else {
-        None.expect("Did not found it")
-    };
+    let database_url = std::env::var("DATABASE_URL")
+        .expect("DATABASE_URL env variables are not set");
 
     println!("Connecting to db...");
 
