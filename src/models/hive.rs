@@ -1,5 +1,5 @@
 use serde::{Serialize, Deserialize};
-use sqlx::{FromRow}; // FromRow is a SQLx trait that automatically maps database rows to this struct.
+use sqlx::{FromRow, MySqlPool, Result}; // FromRow is a SQLx trait that automatically maps database rows to this struct.
 use chrono::{DateTime, Utc};
 
 
@@ -11,4 +11,21 @@ pub struct Hive {
     pub humidity: Option<f32>,
     pub created_at: DateTime<Utc>,
     pub updated_at: Option<DateTime<Utc>>,
+}
+
+impl Hive {
+    // This is static method so no self
+    // Returns either a Vec of hives or a database error
+
+    // The underscore _ allows SQLx to infer the row type automatically based on the query result,
+    // while `Hive` is the target type to which each row will be mapped. 
+    // This means SQLx will automatically map the columns of the query result to the fields in the `Hive` struct.
+    pub async fn get_all(pool: &MySqlPool) -> Result<Vec<Hive>> {
+        sqlx::query_as::<_, Hive>(
+            "SELECT *
+            FROM hives"
+        )
+        .fetch_all(pool)
+        .await
+    }
 }
