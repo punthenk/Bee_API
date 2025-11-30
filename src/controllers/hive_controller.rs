@@ -11,8 +11,7 @@ pub async fn get_all_hives( State(pool): State<MySqlPool>,) -> Result<Json<Vec<H
     // Query all hives from the database
     // The `query_as!` macro does compile-time SQL verification (amazing!)
     // and automatically maps the result to our Hive struct
-    let hives = sqlx::query_as!(
-        Hive,
+    let hives = sqlx::query_as::<_, Hive>(
         "SELECT *
          FROM hives"
     )

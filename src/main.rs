@@ -16,14 +16,18 @@ mod routes;
 /// 2. Connects to the database
 /// 3. Creates the router with all routes
 /// 4. Starts the HTTP server
-
 #[tokio::main]
 async fn main() {
-    tracing_subscriber::fmt::init();
     dotenv::dotenv().ok();
+    tracing_subscriber::fmt::init();
 
-    let database_url = std::env::var("DATABASE_URL")
-        .unwrap_or_else(|_| "mysql://admin:root@localhost/beekeeper_db".to_string());
+    let database_url = if let Ok(url) = std::env::var("DATABASE_URL") {
+        url
+    } else {
+        None.expect("Did not found it")
+    };
+
+    println!("Connecting to db...");
 
     let pool = MySqlPoolOptions::new()
         .max_connections(5)
@@ -31,19 +35,20 @@ async fn main() {
         .await
         .expect("Failed to connect to database");
 
+    println!("Is connected to db");
+
     let app = routes::create_routes(pool);
 
-    // Run it on localhost:3000
-    let address = SocketAddr::from(([127, 0, 0, 1], 3000));
+    let host = std::env::var("HOST").unwrap_or_else(|_| "127.0.0.1".to_string());
+    let port = std::env::var("PORT").unwrap_or_else(|_| "3000".to_string());
+    let address = format!("{}:{}", host, port);
 
-    let listener = tokio::net::TcpListener::bind(address)
+    let listener = tokio::net::TcpListener::bind(&address)
         .await
-        .expect("Failed to bind to adress");
+        .expect("Failed to bind to address");
 
-    println!("Server running on http://{}", address);
-    
-    // Start the server
-    // This will run until it is killed
+    println!("Listening on http://{}", address);
+
     axum::serve(listener, app)
         .await
         .expect("Server failed to start");
