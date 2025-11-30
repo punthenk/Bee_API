@@ -7,7 +7,7 @@ use sqlx::MySqlPool;
 
 use crate::models::hive::Hive;
 
-pub async fn get_all_hives(State(pool): State<MySqlPool>) -> Result<Json<Vec<Hive>>, StatusCode> {
+pub async fn get_all(State(pool): State<MySqlPool>) -> Result<Json<Vec<Hive>>, StatusCode> {
     match Hive::get_all(&pool).await {
         Ok(hives) => Ok(Json(hives)),
         Err(e) => {
