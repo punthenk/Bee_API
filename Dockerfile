@@ -22,7 +22,7 @@ RUN apt-get update && \
     rm -rf /var/lib/apt/lists/*
 
 # Copy the compiled binary from builder
-COPY --from=builder /app/target/release/bee_backend /usr/local/bin/bee_backend
+COPY --from=builder /app/target/release/beekeeper_API /usr/local/bin/beekeeper_API
 
 # Expose the port the API runs on
 EXPOSE 3000

@@ -7,7 +7,7 @@ use sqlx::MySqlPool;
 
 use crate::models::hive::Hive;
 
-pub async fn get_all_hives( State(pool): State<MySqlPool>,) -> Result<Json<Vec<Hive>>, StatusCode> {
+pub async fn get_all_hives(State(pool): State<MySqlPool>,) -> Result<Json<Vec<Hive>>, StatusCode> {
     // Query all hives from the database
     // The `query_as!` macro does compile-time SQL verification (amazing!)
     // and automatically maps the result to our Hive struct
