@@ -29,7 +29,7 @@ impl Hive {
         .await
     }
 
-    pub async  fn find(pool: &MySqlPool, id: i32) -> Result<Option<Hive>> {
+    pub async fn find(pool: &MySqlPool, id: i32) -> Result<Option<Hive>> {
         sqlx::query_as::<_, Hive>(
             "SELECT *
             FROM hives
@@ -38,5 +38,22 @@ impl Hive {
         .bind(id)
         .fetch_optional(pool) // We use optional because it just returns None if the row is not found
         .await
+    }
+
+    pub async fn delete(pool: &MySqlPool, id: i32) -> bool {
+        let query = "
+            DELETE FROM hives
+            WHERE id = ?;
+        ";
+        let result = sqlx::query(query)
+            .bind(id)
+            .fetch_optional(pool)
+            .await;
+
+        if result.is_err() {
+            return true;
+        }
+
+        return true;
     }
 }
