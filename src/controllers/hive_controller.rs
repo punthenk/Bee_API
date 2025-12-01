@@ -27,3 +27,10 @@ pub async fn find(State(pool): State<MySqlPool>, Path(id): Path<i32>) -> Result<
         }
     }
 }
+
+pub async fn delete(State(pool): State<MySqlPool>, Path(id): Path<i32>) -> Result<Json<bool>, StatusCode> {
+    if Hive::delete(&pool, id).await == false {
+        return Err(StatusCode::NOT_FOUND);
+    }
+    return Ok(Json(true));
+}
