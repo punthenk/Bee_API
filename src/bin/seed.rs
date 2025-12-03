@@ -6,12 +6,10 @@ use sqlx::mysql::MySqlPoolOptions;
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
-    // Load environment variables
     dotenv::dotenv().ok();
 
     println!("Starting database seeding...");
 
-    // Get database URL
     let database_url = std::env::var("DATABASE_URL").expect("DATABASE_URL not found");
 
     // Connect to database
