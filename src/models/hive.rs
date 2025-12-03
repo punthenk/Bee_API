@@ -14,7 +14,7 @@ pub struct Hive {
 }
 
 impl Hive {
-    // This is static method so no self
+    // This is a static method so no self
     // Returns either a Vec of hives or a database error
 
     // The underscore _ allows SQLx to infer the row type automatically based on the query result,
@@ -26,6 +26,17 @@ impl Hive {
             FROM hives"
         )
         .fetch_all(pool)
+        .await
+    }
+
+    pub async  fn find(pool: &MySqlPool, id: i32) -> Result<Option<Hive>> {
+        sqlx::query_as::<_, Hive>(
+            "SELECT *
+            FROM hives
+            WHERE id = ?"
+        )
+        .bind(id)
+        .fetch_optional(pool) // We use optional because it just returns None if the row is not found
         .await
     }
 }
