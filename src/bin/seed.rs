@@ -28,19 +28,20 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     println!("Inserting seed data...");
 
     // Insert test hives
-    let hives = vec![
-        ("Hive 1", Some(35.5), Some(69.4)),
-        ("Hive 2", Some(38.10), Some(57.2)),
-        ("Hive 3", Some(32.7), Some(64.15)),
-        ("Hive 4", Some(30.3), Some(67.5)),
-    ];
+    let mut hives: Vec<(String, Option<f32>, Option<f32>)> = Vec::new();
+    let hive_count = 15;
+
+    for i in 1..=hive_count {
+        let hive_name = format!("Hive {i}");
+        hives.push((hive_name, Some(35.5), Some(65.6)));
+    }
 
     for (name, temperature, humidity) in hives {
         sqlx::query(
             "INSERT INTO hives (name, temperature, humidity) 
              VALUES (?, ?, ?)"
         )
-        .bind(name)
+        .bind(&name)
         .bind(temperature)
         .bind(humidity)
         .execute(&pool)
