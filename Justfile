@@ -2,6 +2,9 @@
 default:
     @just --list
 
+run:
+    clear && cargo run
+
 # Start the database
 db-start:
     docker-compose up -d
