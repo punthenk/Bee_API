@@ -1,7 +1,9 @@
 use axum::{
     extract::{Path, State},
     http::StatusCode,
+    response::{IntoResponse, Response},
     Json,
+    Form,
 };
 use sqlx::MySqlPool;
 
@@ -12,6 +14,16 @@ pub async fn get_all(State(pool): State<MySqlPool>) -> Result<Json<Vec<Hive>>, S
         Ok(hives) => Ok(Json(hives)),
         Err(e) => {
             eprintln!("Database error: {:?}", e);
+            Err(StatusCode::INTERNAL_SERVER_ERROR)
+        }
+    }
+}
+
+pub async fn add(State(pool): State<MySqlPool>, Form(data): Form<Hive>) -> Result<Response, StatusCode> {
+    match Hive::add(&pool, data).await {
+        Ok(_) => Ok((StatusCode::CREATED, "Hive created successfully").into_response()),
+        Err(e) => {
+            eprint!("Database error: {:?}", e);
             Err(StatusCode::INTERNAL_SERVER_ERROR)
         }
     }
