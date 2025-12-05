@@ -5,11 +5,24 @@ use chrono::{DateTime, Utc};
 
 #[derive(Debug, Serialize, Deserialize, FromRow)]
 pub struct Hive {
+    #[serde(skip_deserializing)] // Don't expect the id from a form
     pub id: i32,
+
+    pub user_id: i32,
     pub name: String,
+
+    #[serde(skip_deserializing)]
     pub temperature: Option<f32>,
+
+    #[serde(skip_deserializing)]
     pub humidity: Option<f32>,
+
+    pub queen_id: i32,
+
+    #[serde(skip_deserializing)]
     pub created_at: DateTime<Utc>,
+
+    #[serde(skip_deserializing)]
     pub updated_at: Option<DateTime<Utc>>,
 }
 
@@ -29,7 +42,22 @@ impl Hive {
         .await
     }
 
-    pub async  fn find(pool: &MySqlPool, id: i32) -> Result<Option<Hive>> {
+    pub async fn add(pool: &MySqlPool, data: Hive ) -> Result<bool> {
+        const QUERY: &str = "
+            INSERT INTO hives (user_id, name, queen_id)
+            VALUES(?, ?, ?);
+        ";
+        sqlx::query(QUERY)
+            .bind(data.user_id)
+            .bind(data.name)
+            .bind(data.queen_id)
+            .execute(pool)
+            .await?;
+
+        Ok(true)
+    }
+
+    pub async fn find(pool: &MySqlPool, id: i32) -> Result<Option<Hive>> {
         sqlx::query_as::<_, Hive>(
             "SELECT *
             FROM hives
