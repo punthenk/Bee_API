@@ -20,7 +20,7 @@ pub struct Hive {
     pub queen_id: i32,
 
     #[serde(skip_deserializing)]
-    pub created_at: DateTime<Utc>,
+    pub created_at: Option<DateTime<Utc>>,
 
     #[serde(skip_deserializing)]
     pub updated_at: Option<DateTime<Utc>>,

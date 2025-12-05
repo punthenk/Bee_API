@@ -28,26 +28,22 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     println!("Inserting seed data...");
 
     // Insert test hives
-    let mut hives: Vec<(String, Option<f32>, Option<f32>)> = Vec::new();
     let hive_count = 15;
 
     for i in 1..=hive_count {
-        let hive_name = format!("Hive {i}");
-        hives.push((hive_name, Some(35.5), Some(65.6)));
-    }
+        let hive = Hive {
+            id: 1, // NOT USED IN QUERY
+            user_id: 1,
+            queen_id: 1,
+            name: format!("Hive {}", i),
+            temperature: None, // NOT USED IN QUERY
+            humidity: None, // NOT USED IN QUERY
+            created_at: None, // NOT USED IN QUERY
+            updated_at: None, // NOT USED IN QUERY
+        };
 
-    for (name, temperature, humidity) in hives {
-        sqlx::query(
-            "INSERT INTO hives (name, temperature, humidity) 
-             VALUES (?, ?, ?)"
-        )
-        .bind(&name)
-        .bind(temperature)
-        .bind(humidity)
-        .execute(&pool)
-        .await?;
-        
-        println!("Added: {}", name);
+        Hive::add(&pool, hive).await.expect("Failed to add hive");
+        println!("Added: Hive {}", i);
     }
 
     println!("Seeding complete");
