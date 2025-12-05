@@ -1,16 +1,7 @@
 use sqlx::mysql::MySqlPoolOptions;
 use tracing_subscriber;
 
-mod controllers {
-    pub mod hive_controller;
-    pub mod queen_controller;
-}
-
-mod models {
-    pub mod hive;
-    pub mod queen;
-}
-mod routes;
+use beekeeper_API::*;
 
 /// This function:
 /// 1. Sets up logging

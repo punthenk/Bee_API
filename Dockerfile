@@ -28,4 +28,4 @@ COPY --from=builder /app/target/release/beekeeper_API /usr/local/bin/beekeeper_A
 EXPOSE 3000
 
 # Run the binary
-CMD ["beekeeper-api"]
+CMD ["beekeeper_API"]
