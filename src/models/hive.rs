@@ -1,5 +1,5 @@
-use serde::{Serialize, Deserialize};
-use sqlx::{FromRow, MySqlPool, Result}; // FromRow is a SQLx trait that automatically maps database rows to this struct.
+use serde::{Deserialize, Serialize};
+use sqlx::{FromRow, MySqlPool, Result, Error}; // FromRow is a SQLx trait that automatically maps database rows to this struct.
 use chrono::{DateTime, Utc};
 
 
@@ -38,5 +38,33 @@ impl Hive {
         .bind(id)
         .fetch_optional(pool) // We use optional because it just returns None if the row is not found
         .await
+    }
+
+    pub async fn delete(pool: &MySqlPool, id: i32) -> bool {
+        let query = "
+            DELETE FROM hives
+            WHERE id = ?;
+        ";
+        let result = sqlx::query(query)
+            .bind(id)
+            .fetch_optional(pool)
+            .await;
+
+        if result.is_err() {
+            return true;
+        }
+
+        return true;
+    }
+
+    pub async fn delete_all(pool: &MySqlPool) -> Result<bool, Error> {
+        const QUERY: &str = "
+            DELETE FROM hives;
+        ";
+        let result = sqlx::query(QUERY)
+            .execute(pool)
+            .await?;
+
+        Ok(result.rows_affected() > 0)
     }
 }

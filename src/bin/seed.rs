@@ -4,6 +4,8 @@
 
 use sqlx::mysql::MySqlPoolOptions;
 
+use beekeeper_API::models::hive::Hive;
+
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
     dotenv::dotenv().ok();
@@ -20,10 +22,8 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     println!("Clearing existing data...");
     
-    // Clear existing data
-    sqlx::query("DELETE FROM hives")
-        .execute(&pool)
-        .await?;
+    // Clear all existing data
+    Hive::delete_all(&pool).await?;
 
     println!("Inserting seed data...");
 
