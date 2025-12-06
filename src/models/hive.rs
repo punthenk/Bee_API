@@ -27,8 +27,7 @@ pub struct Hive {
 }
 
 #[derive(Debug, Deserialize)]
-pub struct UpdateHive {
-    pub id: i32,
+pub struct UpdateSensorData {
     pub temperature: Option<f32>,
     pub humidity: Option<f32>,
 }
