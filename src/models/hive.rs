@@ -26,6 +26,12 @@ pub struct Hive {
     pub updated_at: Option<DateTime<Utc>>,
 }
 
+#[derive(Debug, Deserialize)]
+pub struct UpdateSensorData {
+    pub temperature: Option<f32>,
+    pub humidity: Option<f32>,
+}
+
 impl Hive {
     // This is a static method so no self
     // Returns either a Vec of hives or a database error
@@ -55,6 +61,27 @@ impl Hive {
             .await?;
 
         Ok(true)
+    }
+
+    pub async fn update_sensor_data(pool: &MySqlPool,
+        temperature: Option<f32>,
+        humidity: Option<f32>,
+        id: i32
+    ) -> Result<bool, Error> {
+        const QUERY: &str = "
+            UPDATE hives
+            SET temperature = ?, humidity = ?
+            WHERE id = ?;
+        ";
+
+        let result = sqlx::query(QUERY)
+            .bind(temperature)
+            .bind(humidity)
+            .bind(id)
+            .execute(pool)
+            .await?;
+
+        Ok(result.rows_affected() > 0)
     }
 
     pub async fn find(pool: &MySqlPool, id: i32) -> Result<Option<Hive>> {
