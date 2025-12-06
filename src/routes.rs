@@ -1,4 +1,4 @@
-use axum::{routing::get, routing::post, routing::delete, Router};
+use axum::{routing::get, routing::post, routing::delete, routing::patch, Router};
 use sqlx::MySqlPool;
 
 use crate::controllers::hive_controller;
@@ -13,6 +13,9 @@ pub fn create_routes(pool: MySqlPool) -> Router {
 
         // POST
         .route("/hive", post(hive_controller::add))
+
+        // PATCH
+        .route("/data", patch(hive_controller::update_sensor_data))
 
         // DELETE
         .route("/hive/{id}", delete(hive_controller::delete))

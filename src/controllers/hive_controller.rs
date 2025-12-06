@@ -7,7 +7,7 @@ use axum::{
 };
 use sqlx::MySqlPool;
 
-use crate::models::hive::Hive;
+use crate::models::hive::{Hive, UpdateHive};
 
 pub async fn get_all(State(pool): State<MySqlPool>) -> Result<Json<Vec<Hive>>, StatusCode> {
     match Hive::get_all(&pool).await {
@@ -22,6 +22,19 @@ pub async fn get_all(State(pool): State<MySqlPool>) -> Result<Json<Vec<Hive>>, S
 pub async fn add(State(pool): State<MySqlPool>, Form(data): Form<Hive>) -> Result<Response, StatusCode> {
     match Hive::add(&pool, data).await {
         Ok(_) => Ok((StatusCode::CREATED, "Hive created successfully").into_response()),
+        Err(e) => {
+            eprint!("Database error: {:?}", e);
+            Err(StatusCode::INTERNAL_SERVER_ERROR)
+        }
+    }
+}
+
+pub async fn update_sensor_data(State(pool): State<MySqlPool>, 
+    Json(data): Json<UpdateHive>
+) -> Result<Response, StatusCode> {
+    match Hive::update_sensor_data(&pool, data.temperature, data.humidity, data.id).await {
+        Ok(true) => Ok((StatusCode::OK, "Hive updated successfully").into_response()),
+        Ok(false) => Ok((StatusCode::NOT_FOUND, "Hive could not be found").into_response()),
         Err(e) => {
             eprint!("Database error: {:?}", e);
             Err(StatusCode::INTERNAL_SERVER_ERROR)
