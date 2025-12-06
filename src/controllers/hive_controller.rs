@@ -23,7 +23,7 @@ pub async fn add(State(pool): State<MySqlPool>, Form(data): Form<Hive>) -> Resul
     match Hive::add(&pool, data).await {
         Ok(_) => Ok((StatusCode::CREATED, "Hive created successfully").into_response()),
         Err(e) => {
-            eprint!("Database error: {:?}", e);
+            eprintln!("Database error: {:?}", e);
             Err(StatusCode::INTERNAL_SERVER_ERROR)
         }
     }
@@ -37,7 +37,7 @@ pub async fn update_sensor_data(State(pool): State<MySqlPool>,
         Ok(true) => Ok((StatusCode::OK, "Hive updated successfully").into_response()),
         Ok(false) => Ok((StatusCode::NOT_FOUND, "Hive could not be found").into_response()),
         Err(e) => {
-            eprint!("Database error: {:?}", e);
+            eprintln!("Database error: {:?}", e);
             Err(StatusCode::INTERNAL_SERVER_ERROR)
         }
     }
