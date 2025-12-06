@@ -7,7 +7,7 @@ use axum::{
 };
 use sqlx::MySqlPool;
 
-use crate::models::hive::{Hive, UpdateHive};
+use crate::models::hive::{Hive, UpdateSensorData};
 
 pub async fn get_all(State(pool): State<MySqlPool>) -> Result<Json<Vec<Hive>>, StatusCode> {
     match Hive::get_all(&pool).await {
@@ -30,9 +30,10 @@ pub async fn add(State(pool): State<MySqlPool>, Form(data): Form<Hive>) -> Resul
 }
 
 pub async fn update_sensor_data(State(pool): State<MySqlPool>, 
-    Json(data): Json<UpdateHive>
+    Path(id): Path<i32>,
+    Json(data): Json<UpdateSensorData>
 ) -> Result<Response, StatusCode> {
-    match Hive::update_sensor_data(&pool, data.temperature, data.humidity, data.id).await {
+    match Hive::update_sensor_data(&pool, data.temperature, data.humidity, id).await {
         Ok(true) => Ok((StatusCode::OK, "Hive updated successfully").into_response()),
         Ok(false) => Ok((StatusCode::NOT_FOUND, "Hive could not be found").into_response()),
         Err(e) => {
