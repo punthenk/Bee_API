@@ -8,7 +8,7 @@ CREATE TABLE users (
     updated_at  TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 );
 
-CREATE TABLE queen (
+CREATE TABLE queens (
     id          INT AUTO_INCREMENT PRIMARY KEY,
     race        VARCHAR(255) NOT NULL,
     origin      VARCHAR(255) NOT NULL,
@@ -32,7 +32,7 @@ CREATE TABLE hives (
         FOREIGN KEY (user_id) REFERENCES users(id)
         ON DELETE CASCADE,
     CONSTRAINT fk_hives_queen_id
-        FOREIGN KEY (queen_id) REFERENCES queen(id)
+        FOREIGN KEY (queen_id) REFERENCES queens(id)
         ON DELETE SET NULL
 );
 
@@ -61,6 +61,6 @@ CREATE TABLE inspections (
         FOREIGN KEY (hive_id) REFERENCES hives(id)
         ON DELETE CASCADE,
     CONSTRAINT fk_inspections_queen_id
-        FOREIGN KEY (queen_id) REFERENCES queen(id)
+        FOREIGN KEY (queen_id) REFERENCES queens(id)
         ON DELETE SET NULL
 );
