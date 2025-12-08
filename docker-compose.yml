@@ -10,12 +10,20 @@ services:
       MYSQL_PASSWORD: root
     volumes:
       - db_data:/var/lib/mysql
-      # Initialize the database with our schema
       - ./schema.sql:/docker-entrypoint-initdb.d/schema.sql
     ports:
-      # Expose MySQL on localhost:3306
       - "3306:3306"
 
+  api:
+    build: .
+    container_name: beekeeper_api
+    restart: always
+    ports:
+      - "3000:3000"  # Maps host:container
+    environment:
+      DATABASE_URL: mysql://admin:root@db:3306/beekeeper_db
+    depends_on:
+      - db
 
 volumes:
   db_data:

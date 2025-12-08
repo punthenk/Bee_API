@@ -1,5 +1,5 @@
 # Use official Rust image as builder
-FROM rust:1.75 as builder
+FROM rust:latest as builder
 
 # Create a new empty project
 WORKDIR /app
@@ -22,10 +22,10 @@ RUN apt-get update && \
     rm -rf /var/lib/apt/lists/*
 
 # Copy the compiled binary from builder
-COPY --from=builder /app/target/release/beekeeper_API /usr/local/bin/beekeeper_API
+COPY --from=builder /app/target/release/default /usr/local/bin/default
 
 # Expose the port the API runs on
 EXPOSE 3000
 
 # Run the binary
-CMD ["beekeeper_API"]
+CMD ["default"]
