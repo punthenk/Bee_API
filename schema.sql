@@ -3,7 +3,9 @@ CREATE TABLE users (
     firstname   VARCHAR(255) NOT NULL,
     lastname    VARCHAR(255) NOT NULL,
     email       VARCHAR(255) NOT NULL UNIQUE,
-    password    VARCHAR(255) NOT NULL
+    password    VARCHAR(255) NOT NULL,
+    created_at  TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at  TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 );
 
 CREATE TABLE queen (
@@ -35,21 +37,23 @@ CREATE TABLE hives (
 );
 
 CREATE TABLE inspections (
-    id              INT AUTO_INCREMENT PRIMARY KEY,
-    user_id         INT NOT NULL,
-    hive_id         INT NOT NULL,
-    queen_id        INT,
-    date            DATE NOT NULL,
-    behaviour       VARCHAR(255),
-    queen_seen      BOOLEAN,
-    honeycomb_built INT,
-    windows_occ     INT,
-    BRIAS           VARCHAR(255),
-    BRIAS2          VARCHAR(255),
-    invested_space  INT,
-    stock_food      INT,
-    pollen          INT,
-    mite_fall       INT,
+    id               INT AUTO_INCREMENT PRIMARY KEY,
+    user_id          INT NOT NULL,
+    hive_id          INT NOT NULL,
+    queen_id         INT,
+    date             DATE NOT NULL,
+    behaviour        VARCHAR(255),
+    queen_seen       BOOLEAN,
+    honeycomb_count  INT,
+    windows_occupied INT,
+    BRIAS            VARCHAR(255),
+    BRIAS_healty     VARCHAR(255),
+    invested_swarm_cells  INT,
+    stock_food       INT,
+    pollen           INT,
+    mite_fall        INT,
+    created_at  TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at  TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     CONSTRAINT fk_inspections_user_id
         FOREIGN KEY (user_id) REFERENCES users(id)
         ON DELETE CASCADE,
@@ -59,4 +63,4 @@ CREATE TABLE inspections (
     CONSTRAINT fk_inspections_queen_id
         FOREIGN KEY (queen_id) REFERENCES queen(id)
         ON DELETE SET NULL
-) ENGINE=InnoDB;
+);
