@@ -17,9 +17,10 @@ db-stop:
 
 # Reset database
 db-reset:
-    docker-compose down -v
-    docker-compose up -d db
-    @sleep 5
+    @echo "Dropping tables..."
+    docker exec -i beekeeper_db mysql -uadmin -proot beekeeper_db < reset.sql
+    @echo "Recreating schema..."
+    docker exec -i beekeeper_db mysql -uadmin -proot beekeeper_db < schema.sql
     @echo "Database reset done"
 
 # Seed the database with test data
