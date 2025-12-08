@@ -28,7 +28,7 @@ async fn main() {
 
     let app = routes::create_routes(pool);
 
-    let host = std::env::var("HOST").unwrap_or_else(|_| "127.0.0.1".to_string());
+    let host = std::env::var("HOST").unwrap_or_else(|_| "0.0.0.0".to_string());
     let port = std::env::var("PORT").unwrap_or_else(|_| "3000".to_string());
     let address = format!("{}:{}", host, port);
 
