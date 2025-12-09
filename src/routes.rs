@@ -12,6 +12,7 @@ pub fn create_routes(pool: MySqlPool) -> Router {
         .route("/hive/{id}", get(hive_controller::find))
         .route("/queens/", get(queen_controller::get_all))
         .route("/inspections", get(inspection_controller::get_all))
+        .route("/inspection/{id}", get(inspection_controller::find))
 
         // POST
         .route("/hive", post(hive_controller::add))

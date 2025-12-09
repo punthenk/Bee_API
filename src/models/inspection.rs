@@ -41,4 +41,15 @@ impl Inspection {
             .fetch_all(pool)
             .await
     }
+
+    pub async fn find(pool: &MySqlPool, id: i32) -> Result<Option<Inspection>> {
+        sqlx::query_as::<_, Inspection>(
+            "SELECT *
+            FROM inspections
+            WHERE id = ?"
+        )
+        .bind(id)
+        .fetch_optional(pool) // We use optional because it just returns None if the row is not found
+        .await
+    }
 }

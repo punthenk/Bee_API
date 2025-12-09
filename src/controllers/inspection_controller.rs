@@ -18,3 +18,14 @@ pub async fn get_all(State(pool): State<MySqlPool>) -> Result<Json<Vec<Inspectio
         }
     }
 }
+
+pub async fn find(State(pool): State<MySqlPool>, Path(id): Path<i32>) -> Result<Json<Inspection>, StatusCode> {
+    match Inspection::find(&pool, id).await {
+        Ok(Some(inspection)) => Ok(Json(inspection)),
+        Ok(None) => Err(StatusCode::NOT_FOUND),
+        Err(e) => {
+            eprintln!("Database error: {:?}", e);
+            Err(StatusCode::INTERNAL_SERVER_ERROR)
+        }
+    }
+}
