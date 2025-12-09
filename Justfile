@@ -17,20 +17,13 @@ db-stop:
 
 # Reset database
 db-reset:
-    docker-compose down -v
-    docker-compose up -d db
-    @sleep 5
+    @echo "Dropping tables..."
+    docker exec -i beekeeper_db mysql -uadmin -proot beekeeper_db < reset.sql
+    @echo "Recreating schema..."
+    docker exec -i beekeeper_db mysql -uadmin -proot beekeeper_db < schema.sql
     @echo "Database reset done"
 
 # Seed the database with test data
 seed:
     @echo "Seeding database..."
     cargo run --bin seed
-
-# Complete setup for new team members
-setup:
-    @echo "Setting up Beekeeper API..."
-    docker-compose up -d
-    @sleep 5
-    cargo run --bin seed
-    @echo "Setup complete"

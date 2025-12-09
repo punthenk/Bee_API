@@ -2,6 +2,7 @@ pub mod models {
     pub mod hive;
     pub mod queen;
     pub mod inspection;
+    pub mod user;
 }
 
 pub mod controllers {
