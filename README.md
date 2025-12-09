@@ -36,6 +36,8 @@ cargo install just
     docker-compose up -d
     # or
     just db-start
+    # or if you want to run the api in a container as well
+    docker-compose down --profile production
     ```
     
     This starts the MySQL database container in the background.
