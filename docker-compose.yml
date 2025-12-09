@@ -15,6 +15,7 @@ services:
       - "3306:3306"
 
   api:
+    profiles: ["production"]
     build: .
     container_name: beekeeper_api
     restart: always
