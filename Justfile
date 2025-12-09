@@ -27,11 +27,3 @@ db-reset:
 seed:
     @echo "Seeding database..."
     cargo run --bin seed
-
-# Complete setup for new team members
-setup:
-    @echo "Setting up Beekeeper API..."
-    docker-compose up -d
-    @sleep 5
-    cargo run --bin seed
-    @echo "Setup complete"
