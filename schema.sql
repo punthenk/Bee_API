@@ -13,7 +13,7 @@ CREATE TABLE queens (
     race        VARCHAR(255) NOT NULL,
     origin      VARCHAR(255) NOT NULL,
     birth_year  INT NOT NULL,
-    fertilized  VARCHAR(255),
+    fertilization_site  VARCHAR(255),
     clipped     TINYINT DEFAULT 0,
     created_at  TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at  TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
