@@ -7,14 +7,21 @@ use axum::{
 };
 use sqlx::MySqlPool;
 
-use crate::models::hive::{Hive, UpdateSensorData};
+use crate::{models::hive::{Hive, UpdateSensorData}, response::ApiError};
+use crate::response::ApiResponse;
 
-pub async fn get_all(State(pool): State<MySqlPool>) -> Result<Json<Vec<Hive>>, StatusCode> {
+pub async fn get_all(State(pool): State<MySqlPool>) -> Response {
     match Hive::get_all(&pool).await {
-        Ok(hives) => Ok(Json(hives)),
+        Ok(hives) => {
+            ApiResponse::new(hives, StatusCode::OK).into_response()
+        }
         Err(e) => {
             eprintln!("Database error: {:?}", e);
-            Err(StatusCode::INTERNAL_SERVER_ERROR)
+            // Err(StatusCode::INTERNAL_SERVER_ERROR)
+            Response::builder()
+                .status(StatusCode::INTERNAL_SERVER_ERROR)
+                .body("Internal server error".into())
+                .unwrap()
         }
     }
 }
@@ -43,13 +50,17 @@ pub async fn update_sensor_data(State(pool): State<MySqlPool>,
     }
 }
 
-pub async fn find(State(pool): State<MySqlPool>, Path(id): Path<i32>) -> Result<Json<Hive>, StatusCode> {
+pub async fn find(State(pool): State<MySqlPool>, Path(id): Path<i32>) -> Response {
     match Hive::find(&pool, id).await {
-        Ok(Some(hive)) => Ok(Json(hive)),
-        Ok(None) => Err(StatusCode::NOT_FOUND),
+        Ok(Some(hive)) => ApiResponse::new(hive, StatusCode::FOUND).into_response(),
+        Ok(None) => ApiError::not_found("Not found"),
         Err(e) => {
             eprintln!("Database error: {:?}", e);
-            Err(StatusCode::INTERNAL_SERVER_ERROR)
+            // Err(StatusCode::INTERNAL_SERVER_ERROR)
+            Response::builder()
+                .status(StatusCode::INTERNAL_SERVER_ERROR)
+                .body("Internal server error".into())
+                .unwrap()
         }
     }
 }
