@@ -15,21 +15,14 @@ pub async fn get_all(State(pool): State<MySqlPool>) -> Response {
         Ok(hives) => {
             ApiResponse::new(hives, StatusCode::OK).into_response()
         }
-        Err(e) => {
-            eprintln!("Database error: {:?}", e);
-            // Err(StatusCode::INTERNAL_SERVER_ERROR)
-            ApiError::internal_error(format!("Database error: {:?}", e))
-        }
+        Err(e) => ApiError::internal_error(format!("Database error: {:?}", e)),
     }
 }
 
-pub async fn add(State(pool): State<MySqlPool>, Form(data): Form<Hive>) -> Result<Response, StatusCode> {
-    match Hive::add(&pool, data).await {
-        Ok(_) => Ok((StatusCode::CREATED, "Hive created successfully").into_response()),
-        Err(e) => {
-            eprintln!("Database error: {:?}", e);
-            Err(StatusCode::INTERNAL_SERVER_ERROR)
-        }
+pub async fn add(State(pool): State<MySqlPool>, Form(data): Form<Hive>) -> Response {
+    match Hive::add(&pool, data.clone()).await {
+        Ok(_) => ApiResponse::created(data).into_response(),
+        Err(e) => ApiError::internal_error(format!("Database error: {:?}", e)),
     }
 }
 

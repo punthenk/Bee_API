@@ -30,6 +30,10 @@ impl<T: Serialize> ApiResponse<T> {
         }
     }
 
+    pub fn created(data: T) -> Self {
+        Self::new(data, StatusCode::CREATED)
+    }
+
     fn status_text(status: StatusCode) -> String {
         status.canonical_reason()
             .unwrap_or("Unknown")
