@@ -58,15 +58,12 @@ impl<T: Serialize> IntoResponse for ApiResponse<T> {
 #[derive(Debug, Serialize, Deserialize)]
 pub struct ErrorData {
     pub error: String,
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub details: Option<String>,
 }
 
 impl ErrorData {
     pub fn new(error: impl Into<String>) -> Self {
         Self {
-            error: error.into(),
-            details: None,
+            error: error.into()
         }
     }
 }
@@ -78,6 +75,13 @@ impl ApiError {
         Self::new(
             ErrorData::new(message),
             StatusCode::NOT_FOUND
+        ).into_response()
+    }
+
+    pub fn internal_error(message: impl Into<String>) -> Response {
+        Self::new(
+            ErrorData::new(message),
+            StatusCode::INTERNAL_SERVER_ERROR
         ).into_response()
     }
 }

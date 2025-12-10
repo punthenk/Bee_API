@@ -7,8 +7,8 @@ use axum::{
 };
 use sqlx::MySqlPool;
 
-use crate::{models::hive::{Hive, UpdateSensorData}, response::ApiError};
-use crate::response::ApiResponse;
+use crate::models::hive::{Hive, UpdateSensorData};
+use crate::response::{ApiResponse, ApiError};
 
 pub async fn get_all(State(pool): State<MySqlPool>) -> Response {
     match Hive::get_all(&pool).await {
@@ -18,10 +18,7 @@ pub async fn get_all(State(pool): State<MySqlPool>) -> Response {
         Err(e) => {
             eprintln!("Database error: {:?}", e);
             // Err(StatusCode::INTERNAL_SERVER_ERROR)
-            Response::builder()
-                .status(StatusCode::INTERNAL_SERVER_ERROR)
-                .body("Internal server error".into())
-                .unwrap()
+            ApiError::internal_error(format!("Database error: {:?}", e))
         }
     }
 }
@@ -53,14 +50,10 @@ pub async fn update_sensor_data(State(pool): State<MySqlPool>,
 pub async fn find(State(pool): State<MySqlPool>, Path(id): Path<i32>) -> Response {
     match Hive::find(&pool, id).await {
         Ok(Some(hive)) => ApiResponse::new(hive, StatusCode::FOUND).into_response(),
-        Ok(None) => ApiError::not_found("Not found"),
+        Ok(None) => ApiError::not_found("Hive not found").into_response(),
         Err(e) => {
             eprintln!("Database error: {:?}", e);
-            // Err(StatusCode::INTERNAL_SERVER_ERROR)
-            Response::builder()
-                .status(StatusCode::INTERNAL_SERVER_ERROR)
-                .body("Internal server error".into())
-                .unwrap()
+            ApiError::internal_error(format!("Database error {:?}", e)).into_response()
         }
     }
 }
