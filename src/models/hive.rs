@@ -3,7 +3,7 @@ use sqlx::{FromRow, MySqlPool, Result, Error}; // FromRow is a SQLx trait that a
 use chrono::{DateTime, Utc};
 
 
-#[derive(Debug, Serialize, Deserialize, FromRow)]
+#[derive(Debug, Serialize, Deserialize, FromRow, Clone)]
 pub struct Hive {
     #[serde(skip_deserializing)] // Don't expect the id from a form
     pub id: i32,
