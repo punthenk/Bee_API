@@ -20,8 +20,8 @@ pub async fn get_all(State(pool): State<MySqlPool>) -> Response {
 }
 
 pub async fn add(State(pool): State<MySqlPool>, Form(data): Form<Hive>) -> Response {
-    match Hive::add(&pool, data.clone()).await {
-        Ok(_) => ApiResponse::created(data).into_response(),
+    match Hive::add(&pool, data).await {
+        Ok(created_hive) => ApiResponse::created(created_hive).into_response(),
         Err(e) => ApiError::internal_error(format!("Database error: {:?}", e)),
     }
 }
