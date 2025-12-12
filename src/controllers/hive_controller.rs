@@ -43,9 +43,12 @@ pub async fn find(State(pool): State<MySqlPool>, Path(id): Path<i32>) -> Respons
     }
 }
 
-pub async fn delete(State(pool): State<MySqlPool>, Path(id): Path<i32>) -> Result<Json<bool>, StatusCode> {
-    if Hive::delete(&pool, id).await == false {
-        return Err(StatusCode::NOT_FOUND);
+pub async fn delete(State(pool): State<MySqlPool>, Path(id): Path<i32>) -> Response {
+    let result = Hive::delete(&pool, id).await;
+
+    match result {
+        Ok(true) => (axum::http::StatusCode::NO_CONTENT, ()).into_response(),
+        Ok(false) => ApiError::not_found("Hive not found"),
+        Err(e) => ApiError::internal_error(format!("Database error: {}", e)),
     }
-    return Ok(Json(true));
 }

@@ -95,21 +95,28 @@ impl Hive {
         .await
     }
 
-    pub async fn delete(pool: &MySqlPool, id: i32) -> bool {
+    pub async fn delete(pool: &MySqlPool, id: i32) -> Result<bool> {
         let query = "
             DELETE FROM hives
             WHERE id = ?;
         ";
         let result = sqlx::query(query)
             .bind(id)
-            .fetch_optional(pool)
+            .execute(pool)
             .await;
 
-        if result.is_err() {
-            return true;
+        match result {
+            Ok(res) => {
+                if res.rows_affected() > 0 {
+                    Ok(true)
+                } else {
+                    Ok(false)
+                }
+            }
+            Err(e) => {
+                Err(e.into())
+            }
         }
-
-        return true;
     }
 
     pub async fn delete_all(pool: &MySqlPool) -> Result<bool, Error> {
