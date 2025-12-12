@@ -29,14 +29,11 @@ pub async fn add(State(pool): State<MySqlPool>, Form(data): Form<Hive>) -> Respo
 pub async fn update_sensor_data(State(pool): State<MySqlPool>, 
     Path(id): Path<i32>,
     Json(data): Json<UpdateSensorData>
-) -> Result<Response, StatusCode> {
+) -> Response {
     match Hive::update_sensor_data(&pool, data.temperature, data.humidity, id).await {
-        Ok(true) => Ok((StatusCode::OK, "Hive updated successfully").into_response()),
-        Ok(false) => Ok((StatusCode::NOT_FOUND, "Hive could not be found").into_response()),
-        Err(e) => {
-            eprintln!("Database error: {:?}", e);
-            Err(StatusCode::INTERNAL_SERVER_ERROR)
-        }
+        Ok(true) => ApiResponse::new(data, StatusCode::OK).into_response(),
+        Ok(false) => ApiError::not_found("Hive could not be found"),
+        Err(e) => ApiError::internal_error(format!("Database error: {:?}", e)),
     }
 }
 
