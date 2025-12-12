@@ -37,9 +37,9 @@ pub async fn update_sensor_data(State(pool): State<MySqlPool>,
 
 pub async fn find(State(pool): State<MySqlPool>, Path(id): Path<i32>) -> Response {
     match Hive::find(&pool, id).await {
-        Ok(Some(hive)) => ApiResponse::new(hive, StatusCode::FOUND).into_response(),
-        Ok(None) => ApiError::not_found("Hive not found").into_response(),
-        Err(e) => ApiError::internal_error(format!("Database error {:?}", e)).into_response(),
+        Ok(Some(hive)) => ApiResponse::new(hive, StatusCode::OK).into_response(),
+        Ok(None) => ApiError::not_found("Hive not found"),
+        Err(e) => ApiError::internal_error(format!("Database error: {:?}", e)),
     }
 }
 
@@ -49,6 +49,6 @@ pub async fn delete(State(pool): State<MySqlPool>, Path(id): Path<i32>) -> Respo
     match result {
         Ok(true) => (axum::http::StatusCode::NO_CONTENT, ()).into_response(),
         Ok(false) => ApiError::not_found("Hive not found"),
-        Err(e) => ApiError::internal_error(format!("Database error: {}", e)),
+        Err(e) => ApiError::internal_error(format!("Database error: {:?}", e)),
     }
 }

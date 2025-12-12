@@ -13,7 +13,7 @@ use crate::response::{ApiResponse, ApiError};
 pub async fn get_all(State(pool): State<MySqlPool>) -> Response {
     match Inspection::get_all(&pool).await {
         Ok(inspections) => ApiResponse::new(inspections, StatusCode::OK).into_response(),
-        Err(e) => ApiError::internal_error(format!("Database error {:?}", e)),
+        Err(e) => ApiError::internal_error(format!("Database error: {:?}", e)),
     }
 }
 
