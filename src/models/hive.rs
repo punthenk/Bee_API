@@ -26,7 +26,7 @@ pub struct Hive {
     pub updated_at: Option<DateTime<Utc>>,
 }
 
-#[derive(Debug, Deserialize)]
+#[derive(Debug, Serialize, Deserialize)]
 pub struct UpdateSensorData {
     pub temperature: Option<f32>,
     pub humidity: Option<f32>,
