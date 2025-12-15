@@ -17,7 +17,7 @@ pub struct Inspection {
     pub honeycomb_count: i32,
     pub windows_occupied: i32,
     pub BRIAS: String,
-    pub BRIAS_healty: String,
+    pub BRIAS_healthy: String,
     pub invested_swarm_cells: i32,
     pub stock_food: i32,
     pub pollen: i32,
@@ -51,5 +51,46 @@ impl Inspection {
         .bind(id)
         .fetch_optional(pool) // We use optional because it just returns None if the row is not found
         .await
+    }
+
+    pub async fn add(pool: &MySqlPool, data: Inspection) -> Result<bool> {
+        const QUERY: &str = "
+            INSERT INTO inspections (
+                user_id, 
+                hive_id, 
+                queen_id,
+                date,
+                behaviour,
+                queen_seen,
+                honeycomb_count,
+                windows_occupied,
+                BRIAS,
+                BRIAS_healthy,
+                invested_swarm_cells,
+                stock_food,
+                pollen,
+                mite_fall
+            )
+            VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+        ";
+        sqlx::query(QUERY)
+            .bind(data.user_id)
+            .bind(data.hive_id)
+            .bind(data.queen_id)
+            .bind(data.date)
+            .bind(data.behaviour)
+            .bind(data.queen_seen)
+            .bind(data.honeycomb_count)
+            .bind(data.windows_occupied)
+            .bind(data.BRIAS)
+            .bind(data.BRIAS_healthy)
+            .bind(data.invested_swarm_cells)
+            .bind(data.stock_food)
+            .bind(data.pollen)
+            .bind(data.mite_fall)
+            .execute(pool)
+            .await?;
+
+        Ok(true)
     }
 }
