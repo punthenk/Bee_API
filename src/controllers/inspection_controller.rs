@@ -24,3 +24,10 @@ pub async fn find(State(pool): State<MySqlPool>, Path(id): Path<i32>) -> Respons
         Err(e) => ApiError::internal_error(format!("Database error: {:?}", e)),
     }
 }
+
+pub async fn add(State(pool): State<MySqlPool>, Form(data): Form<Inspection>) -> Response {
+    match Inspection::add(&pool, data).await {
+        Ok(created_inspection) => ApiResponse::created(created_inspection).into_response(),
+        Err(e) => ApiError::internal_error(format!("Database error: {:?}", e)),
+    }
+}

@@ -16,6 +16,7 @@ pub fn create_routes(pool: MySqlPool) -> Router {
 
         // POST
         .route("/hive", post(hive_controller::add))
+        .route("/inspection", post(inspection_controller::add))
 
         // PATCH
         .route("/hive/{id}/sensor", patch(hive_controller::update_sensor_data))
