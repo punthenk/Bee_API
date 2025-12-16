@@ -11,7 +11,7 @@ pub struct Inspection {
     pub user_id: i32,
     pub hive_id: i32,
     pub queen_id: i32,
-    pub date: NaiveDate,
+    pub date: Option<NaiveDate>,
     pub behaviour: Option<String>,
     pub queen_seen: Option<bool>,
     pub honeycomb_count: Option<i32>,
@@ -104,5 +104,45 @@ impl Inspection {
             .await?;
 
         Ok(true)
+    }
+
+    pub async fn update(pool: &MySqlPool, id: i32, data: Inspection) -> Result<bool> {
+        let mut query_builder = sqlx::QueryBuilder::new("UPDATE inspections SET ");
+        let mut has_updates = false;
+
+        macro_rules! add {
+            ($field_name:expr, $field_value:expr) => {
+                    if let Some(ref val) = $field_value {
+                    if has_updates {
+                    query_builder.push(", ");
+                }
+                query_builder.push(format!("{} = ", $field_name));
+                query_builder.push_bind(val);
+                has_updates = true;
+                }
+            };
+        }
+
+        add!("date", data.date);
+        add!("behaviour", data.behaviour);
+        add!("queen_seen", data.queen_seen);
+        add!("honeycomb_count", data.honeycomb_count);
+        add!("windows_occupied", data.windows_occupied);
+        add!("BRIAS", data.BRIAS);
+        add!("BRIAS_healthy", data.BRIAS_healthy);
+        add!("invested_swarm_cells", data.invested_swarm_cells);
+        add!("stock_food", data.stock_food);
+        add!("pollen", data.pollen);
+        add!("mite_fall", data.mite_fall);
+
+        if !has_updates {
+            return Ok(false);
+        }
+
+        query_builder.push(", updated_at = ").push_bind(Utc::now());
+        query_builder.push(" WHERE id = ").push_bind(id);
+
+        let result = query_builder.build().execute(pool).await?;
+        Ok(result.rows_affected() > 0)
     }
 }

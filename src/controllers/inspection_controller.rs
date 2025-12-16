@@ -43,3 +43,11 @@ pub async fn get_all_from_hive(State(pool): State<MySqlPool>, Path(id): Path<i32
         Err(e) => ApiError::internal_error(format!("Database error: {:?}", e)),
     }
 }
+
+pub async fn update(State(pool): State<MySqlPool>, Path(id): Path<i32>, Form(data): Form<Inspection>) -> Response {
+    match Inspection::update(&pool, id, data).await {
+        Ok(true) => ApiResponse::new(true, StatusCode::OK).into_response(),
+        Ok(false) => ApiError::not_found("not found"),
+        Err(e) => ApiError::internal_error(format!("Database error: {:?}", e)),
+    }
+}
