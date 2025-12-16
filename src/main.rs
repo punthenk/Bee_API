@@ -1,7 +1,7 @@
 use sqlx::mysql::MySqlPoolOptions;
 use tracing_subscriber;
 
-use beekeeper_API::*;
+use beekeeper_api::*;
 
 /// This function:
 /// 1. Sets up logging

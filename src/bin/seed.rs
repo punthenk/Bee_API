@@ -4,9 +4,9 @@
 
 use sqlx::mysql::MySqlPoolOptions;
 
-use beekeeper_API::models::hive::Hive;
-use beekeeper_API::models::queen::Queen;
-use beekeeper_API::models::user::User;
+use beekeeper_api::models::hive::Hive;
+use beekeeper_api::models::queen::Queen;
+use beekeeper_api::models::user::User;
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {

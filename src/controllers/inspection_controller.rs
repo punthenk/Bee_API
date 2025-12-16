@@ -2,7 +2,6 @@ use axum::{
     extract::{Path, State},
     http::StatusCode,
     response::{IntoResponse, Response},
-    Json,
     Form,
 };
 use sqlx::MySqlPool;

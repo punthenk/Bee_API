@@ -1,9 +1,10 @@
 use serde::{Deserialize, Serialize};
-use sqlx::{FromRow, MySqlPool, Result, Error}; // FromRow is a SQLx trait that automatically maps database rows to this struct.
+use sqlx::{FromRow, MySqlPool, Result}; // FromRow is a SQLx trait that automatically maps database rows to this struct.
 use chrono::{DateTime, NaiveDate, Utc};
 
 
 #[derive(Debug, Serialize, Deserialize, FromRow)]
+#[allow(non_snake_case)]
 pub struct Inspection {
     #[serde(skip_deserializing)] // Don't expect the id from a form
     pub id: i32,

@@ -1,12 +1,11 @@
 use axum::{
-    extract::{Path, State},
+    extract::{State},
     response::{IntoResponse, Response},
     http::StatusCode,
-    Json,
 };
 use sqlx::MySqlPool;
 
-use crate::models::queen::{self, Queen};
+use crate::models::queen::{Queen};
 use crate::response::{ApiResponse, ApiError};
 
 pub async fn get_all(State(pool): State<MySqlPool>) -> Response {
