@@ -31,3 +31,15 @@ pub async fn add(State(pool): State<MySqlPool>, Form(data): Form<Inspection>) ->
         Err(e) => ApiError::internal_error(format!("Database error: {:?}", e)),
     }
 }
+
+pub async fn get_all_from_hive(State(pool): State<MySqlPool>, Path(id): Path<i32>) -> Response {
+    match Inspection::get_from_hive(&pool, id).await {
+        Ok(inspections) => {
+            if inspections.is_empty() {
+                return ApiError::not_found("Could not find any inspections from this hive");
+            }
+            ApiResponse::new(inspections, StatusCode::OK).into_response()
+        }
+        Err(e) => ApiError::internal_error(format!("Database error: {:?}", e)),
+    }
+}
