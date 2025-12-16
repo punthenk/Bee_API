@@ -53,6 +53,18 @@ impl Inspection {
         .await
     }
 
+    pub async fn get_from_hive(pool: &MySqlPool, id: i32) -> Result<Vec<Inspection>> {
+        const QUERY: &str = "
+            SELECT * FROM
+            inspections
+            WHERE hive_id = ?;
+        ";
+        sqlx::query_as::<_, Inspection>(QUERY)
+            .bind(id)
+            .fetch_all(pool)
+            .await
+    }
+
     pub async fn add(pool: &MySqlPool, data: Inspection) -> Result<bool> {
         const QUERY: &str = "
             INSERT INTO inspections (
