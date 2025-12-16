@@ -40,7 +40,7 @@ CREATE TABLE inspections (
     id               INT AUTO_INCREMENT PRIMARY KEY,
     user_id          INT NOT NULL,
     hive_id          INT NOT NULL,
-    queen_id         INT NOT NULL,
+    queen_id         INT,
     date             DATE NOT NULL,
     behaviour        VARCHAR(255),
     queen_seen       BOOLEAN,
