@@ -1,6 +1,6 @@
 use axum::{
     extract::{State},
-    response::{IntoResponse, Response},
+    response::{Response},
 };
 use sqlx::MySqlPool;
 
