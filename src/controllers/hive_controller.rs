@@ -12,15 +12,15 @@ use crate::response::{ApiResponse, ApiError};
 
 pub async fn get_all(State(pool): State<MySqlPool>) -> Response {
     match Hive::get_all(&pool).await {
-        Ok(hives) => ApiResponse::new(hives, StatusCode::OK).into_response(),
-        Err(e) => ApiError::internal_error(format!("Database error: {:?}", e)),
+        Ok(hives) => ApiResponse::ok(hives),
+        Err(e) => ApiError::internal_error(e.to_string()),
     }
 }
 
 pub async fn add(State(pool): State<MySqlPool>, Form(data): Form<Hive>) -> Response {
     match Hive::add(&pool, data).await {
-        Ok(created_hive) => ApiResponse::created(created_hive).into_response(),
-        Err(e) => ApiError::internal_error(format!("Database error: {:?}", e)),
+        Ok(created_hive) => ApiResponse::created(created_hive),
+        Err(e) => ApiError::internal_error(e.to_string()),
     }
 }
 
@@ -29,17 +29,17 @@ pub async fn update_sensor_data(State(pool): State<MySqlPool>,
     Json(data): Json<UpdateSensorData>
 ) -> Response {
     match Hive::update_sensor_data(&pool, data.temperature, data.humidity, id).await {
-        Ok(true) => ApiResponse::new(data, StatusCode::OK).into_response(),
+        Ok(true) => ApiResponse::ok(data),
         Ok(false) => ApiError::not_found("Hive could not be found"),
-        Err(e) => ApiError::internal_error(format!("Database error: {:?}", e)),
+        Err(e) => ApiError::internal_error(e.to_string()),
     }
 }
 
 pub async fn find(State(pool): State<MySqlPool>, Path(id): Path<i32>) -> Response {
     match Hive::find(&pool, id).await {
-        Ok(Some(hive)) => ApiResponse::new(hive, StatusCode::OK).into_response(),
+        Ok(Some(hive)) => ApiResponse::ok(hive),
         Ok(None) => ApiError::not_found("Hive not found"),
-        Err(e) => ApiError::internal_error(format!("Database error: {:?}", e)),
+        Err(e) => ApiError::internal_error(e.to_string()),
     }
 }
 
@@ -47,8 +47,8 @@ pub async fn delete(State(pool): State<MySqlPool>, Path(id): Path<i32>) -> Respo
     let result = Hive::delete(&pool, id).await;
 
     match result {
-        Ok(true) => (axum::http::StatusCode::NO_CONTENT, ()).into_response(),
+        Ok(true) => (StatusCode::NO_CONTENT, ()).into_response(),
         Ok(false) => ApiError::not_found("Hive not found"),
-        Err(e) => ApiError::internal_error(format!("Database error: {:?}", e)),
+        Err(e) => ApiError::internal_error(e.to_string()),
     }
 }
