@@ -30,8 +30,12 @@ impl<T: Serialize> ApiResponse<T> {
         }
     }
 
-    pub fn created(data: T) -> Self {
-        Self::new(data, StatusCode::CREATED)
+    pub fn ok(data: T) -> Response {
+        Self::new(data, StatusCode::OK).into_response()
+    }
+
+    pub fn created(data: T) -> Response {
+        Self::new(data, StatusCode::CREATED).into_response()
     }
 
     fn status_text(status: StatusCode) -> String {
@@ -82,7 +86,8 @@ impl ApiError {
         ).into_response()
     }
 
-    pub fn internal_error(message: impl Into<String>) -> Response {
+    pub fn internal_error(error_message: String) -> Response {
+        let message: String = format!("Database error: {:?}", error_message);
         Self::new(
             ErrorData::new(message),
             StatusCode::INTERNAL_SERVER_ERROR
